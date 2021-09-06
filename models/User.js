@@ -36,9 +36,9 @@ const userSchema = mongoose.Schema({
     required: true,
   },
   theme: {
-  type: String,
-  required: true,
-  enum: [],
+    type: String,
+    required: true,
+    enum: [],
   },
 });
 
