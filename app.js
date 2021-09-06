@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const createError = require("http-errors");
 const express = require("express");
 const cookieParser = require("cookie-parser");
@@ -6,6 +8,8 @@ const logger = require("morgan");
 const index = require("./routes/index");
 
 const app = express();
+
+require("./config/connectMongoose");
 
 app.use(logger("dev"));
 app.use(express.json());
