@@ -7,6 +7,7 @@ const logger = require("morgan");
 
 const index = require("./routes/index");
 const users = require("./routes/users");
+const snippets = require("./routes/snippets");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use((req, res, next) => {
 
 app.use("/", index);
 app.use("/users", users);
+app.use("/snippets", snippets);
 
 app.use(function(req, res, next) {
   next(createError(404));
