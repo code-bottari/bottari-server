@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
 const index = require("./routes/index");
+const users = require("./routes/users");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/", index);
+app.use("/users", users);
 
 app.use(function(req, res, next) {
   next(createError(404));
