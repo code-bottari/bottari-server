@@ -17,6 +17,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.use((req, res, next) => {
+  res.set({
+    "Access-Control-Allow-Origin": process.env.CLIENT_URL,
+    "Access-Control-Allow-Headers": "content-type",
+  });
+
+  next();
+});
+
 app.use("/", index);
 app.use("/users", users);
 
