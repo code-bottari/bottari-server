@@ -1,4 +1,6 @@
 require("dotenv").config();
+require("./config/connectMongoose");
+require("./config/connectSlack");
 
 const createError = require("http-errors");
 const express = require("express");
@@ -8,8 +10,6 @@ const logger = require("morgan");
 const index = require("./routes/index");
 
 const app = express();
-
-require("./config/connectMongoose");
 
 app.use(logger("dev"));
 app.use(express.json());
