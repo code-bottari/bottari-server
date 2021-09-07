@@ -15,4 +15,25 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
+router.get("/:id", async (req, res, next) => {
+  try {
+    const user = await User.findOne({ id: req.params });
+    const { email, nickname, imageUrl, notificationList, subscriberList, theme } = user;
+
+    const result = {
+      result: "ok",
+      email,
+      nickname,
+      imageUrl,
+      notificationList,
+      subscriberList,
+      theme,
+    };
+
+    res.send(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;
