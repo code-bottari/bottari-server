@@ -30,7 +30,7 @@ const app = new App({
         view: {
           type: "modal",
           callback_id: "view_1",
-          ...modalTemplate
+          ...modalTemplate,
         }
       });
 
@@ -57,8 +57,7 @@ const app = new App({
         channel: channel_id,
         text: snippet,
       });
-    }
-    catch (error) {
+    } catch (error) {
       logger.error(error);
     }
   });
