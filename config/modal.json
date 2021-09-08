@@ -1,0 +1,196 @@
+{
+	"title": {
+		"type": "plain_text",
+		"text": "Code Styling"
+	},
+	"submit": {
+		"type": "plain_text",
+		"text": "Submit"
+	},
+	"blocks": [
+		{
+			"type": "input",
+      "block_id": "hashTag",
+			"element": {
+				"type": "plain_text_input",
+				"action_id": "sl_input",
+				"placeholder": {
+					"type": "plain_text",
+					"text": "#HashTag"
+				}
+			},
+			"label": {
+				"type": "plain_text",
+				"text": "Hash Tag"
+			}
+		},
+		{
+			"type": "context",
+			"elements": [
+				{
+					"type": "plain_text",
+					"text": "ㅇ Pascal Case",
+					"emoji": true
+				}
+			]
+		},
+		{
+			"type": "context",
+			"elements": [
+				{
+					"type": "plain_text",
+					"text": "ㅇ Hash Tag 수 5개 이하",
+					"emoji": true
+				}
+			]
+		},
+		{
+			"type": "context",
+			"elements": [
+				{
+					"type": "plain_text",
+					"text": "ㅇ Hash Tag당 15글자 이하",
+					"emoji": true
+				}
+			]
+		},
+		{
+			"type": "input",
+      "block_id": "language",
+			"element": {
+				"type": "static_select",
+				"placeholder": {
+					"type": "plain_text",
+					"text": "Select Language",
+					"emoji": true
+				},
+				"options": [
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Python",
+							"emoji": true
+						},
+						"value": "value-0"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Java",
+							"emoji": true
+						},
+						"value": "value-1"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "JavaScript",
+							"emoji": true
+						},
+						"value": "value-2"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "C#",
+							"emoji": true
+						},
+						"value": "value-3"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "C/C++",
+							"emoji": true
+						},
+						"value": "value-4"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "PHP",
+							"emoji": true
+						},
+						"value": "value-5"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "R",
+							"emoji": true
+						},
+						"value": "value-6"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Objective-C",
+							"emoji": true
+						},
+						"value": "value-7"
+					}
+				],
+				"action_id": "static_select-action"
+			},
+			"label": {
+				"type": "plain_text",
+				"text": "Language",
+				"emoji": true
+			}
+		},
+		{
+			"type": "input",
+      "block_id": "spaces",
+			"element": {
+				"type": "static_select",
+				"placeholder": {
+					"type": "plain_text",
+					"text": "Select spaces",
+					"emoji": true
+				},
+				"options": [
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "2",
+							"emoji": true
+						},
+						"value": "value-0"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "4",
+							"emoji": true
+						},
+						"value": "value-1"
+					}
+				],
+				"action_id": "static_select-action"
+			},
+			"label": {
+				"type": "plain_text",
+				"text": "Tab",
+				"emoji": true
+			}
+		},
+		{
+			"type": "input",
+      "block_id": "snippet",
+			"element": {
+				"type": "plain_text_input",
+				"action_id": "ml_input",
+				"multiline": true,
+				"placeholder": {
+					"type": "plain_text",
+					"text": "const foo = \"bar\";"
+				}
+			},
+			"label": {
+				"type": "plain_text",
+				"text": "Snippet"
+			}
+		}
+	],
+	"type": "modal"
+}
