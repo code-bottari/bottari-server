@@ -31,8 +31,8 @@ router.get("/:id", async (req, res, next) => {
     };
 
     res.send(result);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
