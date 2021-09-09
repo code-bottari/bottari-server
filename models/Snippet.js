@@ -21,10 +21,12 @@ const snippetSchema = mongoose.Schema({
   creator: {
     type: ObjectId,
     required: true,
+    ref: "User",
   },
   poster: {
     type: ObjectId,
     required: true,
+    ref: "User",
   },
   commentList: [comment],
   createdAt: {
