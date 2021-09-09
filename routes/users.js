@@ -1,12 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const createError = require("http-errors");
 const admin = require("firebase-admin");
 
 const User = require("../models/User");
 
 const MESSAGE = require("../constants/messages");
+const ERROR = require("../constants/error");
 
 router.get("/check_member", async (req, res, next) => {
+  const { EXPIRED_TOKEN, UNEXPECTED_ERROR, OK } = MESSAGE;
+  const { AUTH_ID_TOKEN_REVOKED, AUTH_ID_TOKEN_EXPIRED } = ERROR;
   const { idToken } = req.body;
 
   try {
@@ -14,24 +18,27 @@ router.get("/check_member", async (req, res, next) => {
       .auth()
       .verifyIdToken(idToken, false);
 
-    if (!decodeToken) {
-      throw createError(403, MESSAGE.EXPIRED_TOKEN);
-    }
-
     const { email } = decodeToken;
 
     const user = await User.findOne({ email });
 
     const hasUserData = user === null ? false : true;
 
-    res.send({ result: MESSAGE.OK, hasUserData });
+    res.send({ result: OK, hasUserData });
   } catch (error) {
-    if (error.status) {
-      next(error);
+    const { code } = error;
+
+    if (code === AUTH_ID_TOKEN_REVOKED) {
+      next(createError(422, INVALID_TOKEN));
       return;
     }
 
-    next({ message: MESSAGE.UNEXPECTED_ERROR });
+    if (code === AUTH_ID_TOKEN_EXPIRED) {
+      next(createError(401, EXPIRED_TOKEN));
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
   }
 });
 
