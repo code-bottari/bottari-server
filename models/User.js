@@ -3,8 +3,9 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const notification = mongoose.Schema({
   type: {
-    type: Array,
+    type: String,
     required: true,
+    enum: ["like", "comment", "subscribe", "snippet"],
   },
   targetId: {
     type: ObjectId,
