@@ -3,8 +3,6 @@ const router = express.Router();
 const createError = require("http-errors");
 const admin = require("firebase-admin");
 
-const MESSAGES = require("../constants/messages");
-
 const User = require("../models/User");
 
 const MESSAGES = require("../constants/messages");
@@ -69,7 +67,8 @@ router.post("/register", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const user = await User.findOne({ id: req.params });
+    const { id } = req.params;
+    const user = await User.findOne({ id });
 
     const result = {
       result: MESSAGES.OK,
