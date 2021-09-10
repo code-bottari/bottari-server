@@ -8,6 +8,22 @@ const Snippet = require("../models/Snippet");
 
 const MESSAGES = require("../constants/messages");
 
+router.get("/", async (req, res, next) => {
+  try {
+    const { language } = req.query;
+    const snippetList = await Snippet.find({ language });
+
+    const result = {
+      result: MESSAGES.OK,
+      snippetList,
+    };
+
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/:id", async (req, res, next) => {
   const { id } = req.params;
 
