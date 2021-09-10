@@ -3,12 +3,15 @@ const router = express.Router();
 
 const Snippet = require("../models/Snippet");
 
+const MESSAGES = require("../constants/messages");
+
 router.get("/", async (req, res, next) => {
   try {
-    const snippetList = await Snippet.find({ language: req.query.language });
+    const { language } = req.query;
+    const snippetList = await Snippet.find({ language });
 
     const result = {
-      result: "ok",
+      result: MESSAGES.OK,
       snippetList,
     };
 
