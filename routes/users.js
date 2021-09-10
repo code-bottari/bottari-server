@@ -31,7 +31,7 @@ router.get("/notification", (req, res, next) => {
     }
 
     jwt.verify(token, process.env.SECRET_KEY, async (error, decoded) => {
-      const user = await User.find((user) => String(user._id) === decoded.id);
+      const user = await User.findById(decoded.id);
 
       if (user === undefined) {
         throw createError(404, NOT_FOUND);
