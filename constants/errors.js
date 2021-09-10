@@ -3,4 +3,4 @@ const ERRORS = {
   AUTH_ID_TOKEN_EXPIRED: "auth/id-token-expired",
 };
 
-export default ERRORS;
+module.exports = ERRORS;
