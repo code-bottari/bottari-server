@@ -11,6 +11,7 @@ const users = require("./routes/users");
 const app = express();
 
 require("./config/connectMongoose");
+require("./config/firebaseAdmin");
 
 app.use(logger("dev"));
 app.use(express.json());
