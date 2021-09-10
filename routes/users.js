@@ -5,24 +5,33 @@ const admin = require("firebase-admin");
 
 const User = require("../models/User");
 
-const MESSAGE = require("../constants/messages");
-const ERROR = require("../constants/error");
+const MESSAGES = require("../constants/messages");
+const ERRORS = require("../constants/errors");
 
-router.get("/check_member", async (req, res, next) => {
-  const { EXPIRED_TOKEN, UNEXPECTED_ERROR, OK } = MESSAGE;
-  const { AUTH_ID_TOKEN_REVOKED, AUTH_ID_TOKEN_EXPIRED } = ERROR;
+router.get("/check-member", async (req, res, next) => {
+  const {
+    EXPIRED_TOKEN,
+    UNEXPECTED_ERROR,
+    OK,
+  } = MESSAGES;
+
+  const {
+    AUTH_ID_TOKEN_REVOKED,
+    AUTH_ID_TOKEN_EXPIRED
+  } = ERRORS;
+
   const { idToken } = req.body;
 
   try {
-    const decodeToken = await admin
+    const decodedToken = await admin
       .auth()
       .verifyIdToken(idToken, false);
 
-    const { email } = decodeToken;
+    const { email } = decodedToken;
 
     const user = await User.findOne({ email });
 
-    const hasUserData = user === null ? false : true;
+    const hasUserData = user !== null;
 
     res.send({ result: OK, hasUserData });
   } catch (error) {
@@ -30,11 +39,13 @@ router.get("/check_member", async (req, res, next) => {
 
     if (code === AUTH_ID_TOKEN_REVOKED) {
       next(createError(422, INVALID_TOKEN));
+
       return;
     }
 
     if (code === AUTH_ID_TOKEN_EXPIRED) {
       next(createError(401, EXPIRED_TOKEN));
+
       return;
     }
 
@@ -48,7 +59,7 @@ router.post("/register", async (req, res, next) => {
 
     await User.create({ email: "이메일", nickname, imageUrl: "url" });
 
-    res.send({ result: MESSAGE.OK });
+    res.send({ result: MESSAGES.OK });
   } catch (error) {
     next(error);
   }
