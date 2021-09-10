@@ -17,44 +17,49 @@ const app = new App({
 })();
 
 (function () {
-  const channelList = {};
+  const channelStorage = {};
 
   app.command("/code", async ({ ack, body, client, logger }) => {
-    const { channel_id } = body;
+    const {
+      channel_id: channelId,
+      trigger_id: triggerId,
+    } = body;
 
     await ack();
 
     try {
       const result = await client.views.open({
-        trigger_id: body.trigger_id,
+        trigger_id: triggerId,
         view: {
           type: "modal",
-          callback_id: "view_1",
+          callback_id: "codeModal",
           ...modalTemplate,
         }
       });
 
-      const view_id = result.view.id;
+      const { id: viewId } = result.view;
 
-      channelList[view_id] = channel_id;
+      channelStorage[viewId] = channelId;
     } catch (error) {
       logger.error(error);
     }
   });
 
-  app.view("view_1", async ({ ack, body, view, client, logger }) => {
+  app.view("codeModal", async ({ ack, body, view, client, logger }) => {
     await ack();
 
-    const hashTag = view.state.values.hashTag.sl_input.value;
-    const language = view.state.values.language["static_select-action"].selected_option.text.text;
-    const spaces = view.state.values.spaces["static_select-action"].selected_option.text.text;
-    const snippet = view.state.values.snippet.ml_input.value;
+    const hashTag = view.state.values.hashTag.input.value;
+    const language = view.state.values.language.select.selected_option.text.text;
+    const spaces = view.state.values.spaces.select.selected_option.text.text;
+    const snippet = view.state.values.snippet.input.value;
 
-    const channel_id = channelList[view.id];
+    const { id: viewId } = view;
+
+    const channelId = channelStorage[viewId];
 
     try {
       await client.chat.postMessage({
-        channel: channel_id,
+        channel: channelId,
         text: snippet,
       });
     } catch (error) {
