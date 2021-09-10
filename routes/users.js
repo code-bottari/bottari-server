@@ -59,7 +59,23 @@ router.post("/register", async (req, res, next) => {
 
     await User.create({ email: "이메일", nickname, imageUrl: "url" });
 
-    res.send({ result: MESSAGES.OK });
+    res.status(200).send({ result: MESSAGES.OK });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findOne({ id });
+
+    const result = {
+      result: MESSAGES.OK,
+      user,
+    };
+
+    res.status(200).send(result);
   } catch (error) {
     next(error);
   }
