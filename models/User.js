@@ -9,7 +9,7 @@ const notification = mongoose.Schema({
   targetId: {
     type: ObjectId,
     required: true,
-    ref: ["User", "Snippet"],
+    ref: "User",
   },
   isChecked: {
     type: Boolean,
@@ -31,14 +31,13 @@ const userSchema = mongoose.Schema({
     required: false,
   },
   notificationList: [notification],
-  subscriberList: {
-    type: Array,
-    required: true,
-  },
+  subscriberList: [{
+    type: ObjectId,
+    ref: "User",
+  }],
   theme: {
     type: String,
-    required: true,
-    enum: [],
+    default: "default",
   },
 });
 
