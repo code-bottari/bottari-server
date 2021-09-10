@@ -11,6 +11,7 @@ const users = require("./routes/users");
 const app = express();
 
 require("./config/connectMongoose");
+require("./config/firebaseAdmin");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -29,16 +30,14 @@ app.use((req, res, next) => {
 app.use("/", index);
 app.use("/users", users);
 
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
-app.use(function(err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  res.status(err.status || 500);
-  res.send(err);
+app.use((error, req, res, next) => {
+  error.result = "error";
+  res.status(error.status || 500);
+  res.send(error);
 });
 
 module.exports = app;
