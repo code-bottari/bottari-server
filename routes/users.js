@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+const MESSAGES = require("../constants/messages");
+
 const User = require("../models/User");
 
 router.post("/register", async (req, res, next) => {
@@ -9,7 +11,7 @@ router.post("/register", async (req, res, next) => {
 
     await User.create({ email: "이메일", nickname, imageUrl: "url"});
 
-    res.status(200).send({ result: "ok" });
+    res.status(200).send({ result: MESSAGES.OK });
   } catch (error) {
     next(error);
   }
@@ -20,7 +22,7 @@ router.get("/:id", async (req, res, next) => {
     const user = await User.findOne({ id: req.params });
 
     const result = {
-      result: "ok",
+      result: MESSAGES.OK,
       user,
     };
 
