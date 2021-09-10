@@ -22,7 +22,6 @@ const verifyToken = async (req, res, next) => {
 
   try {
     jwt.verify(token, process.env.SECRET_KEY);
-
   } catch (error) {
     const { name } = error;
 
@@ -42,4 +41,4 @@ const verifyToken = async (req, res, next) => {
   next();
 };
 
-module.exports = { verifyToken };
+module.exports = verifyToken;
