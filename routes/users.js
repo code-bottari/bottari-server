@@ -22,7 +22,7 @@ router.get("/notification", (req, res, next) => {
       throw createError(401, INVALID_TOKEN);
     }
 
-    jwt.verify(token, SECRET_KEY, async (error, decoded) => {
+    jwt.verify(token, process.env.SECRET_KEY, async (error, decoded) => {
       const user = await User.find((user) => String(user._id) === decoded.id);
 
       if (user === undefined) {
