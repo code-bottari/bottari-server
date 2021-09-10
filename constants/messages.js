@@ -3,6 +3,7 @@ const MESSAGES = {
   EXPIRED_TOKEN: "토큰이 만료되었습니다.",
   INVALID_REQUEST: "유효하지 않은 요청입니다.",
   INVALID_TOKEN: "유효하지 않은 토큰입니다.",
+  NOT_FOUND: "요청하신 정보를 찾을 수 없습니다.",
   OK: "ok",
 };
 
