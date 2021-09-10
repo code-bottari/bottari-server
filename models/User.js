@@ -31,14 +31,13 @@ const userSchema = mongoose.Schema({
     required: false,
   },
   notificationList: [notification],
-  subscriberList: {
-    type: Array,
-    default: [],
-  },
+  subscriberList: [{
+    type: ObjectId,
+    ref: "User",
+  }],
   theme: {
     type: String,
     default: "default",
-    enum: [],
   },
 });
 
