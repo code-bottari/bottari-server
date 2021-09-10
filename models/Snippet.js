@@ -5,6 +5,7 @@ const comment = mongoose.Schema({
   creator: {
     type: ObjectId,
     required: true,
+    ref: "User",
   },
   content: {
     type: String,
@@ -33,7 +34,7 @@ const snippetSchema = mongoose.Schema({
   language: {
     type: String,
     required: true,
-    enum: [],
+    enum: ["Python", "Java", "JavaScript", "C#", "C/C++", "PHP", "R", "Objective-C", "Others"],
   },
   code: {
     type: String,
@@ -43,7 +44,7 @@ const snippetSchema = mongoose.Schema({
     type: Array,
     required: true,
   },
-  hashtahList: {
+  hashtagList: {
     type: Array,
     required: true,
   },
