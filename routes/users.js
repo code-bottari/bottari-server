@@ -9,7 +9,7 @@ router.post("/register", async (req, res, next) => {
 
     await User.create({ email: "이메일", nickname, imageUrl: "url"});
 
-    res.send({ result: "ok" });
+    res.status(200).send({ result: "ok" });
   } catch (error) {
     next(error);
   }
@@ -18,19 +18,13 @@ router.post("/register", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     const user = await User.findOne({ id: req.params });
-    const { email, nickname, imageUrl, notificationList, subscriberList, theme } = user;
 
     const result = {
       result: "ok",
-      email,
-      nickname,
-      imageUrl,
-      notificationList,
-      subscriberList,
-      theme,
+      user,
     };
 
-    res.send(result);
+    res.status(200).send(result);
   } catch (error) {
     next(error);
   }
