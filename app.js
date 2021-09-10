@@ -22,6 +22,7 @@ app.use((req, res, next) => {
   res.set({
     "Access-Control-Allow-Origin": process.env.CLIENT_URL,
     "Access-Control-Allow-Headers": "content-type",
+    "Access-Control-Allow-Credentials": true,
   });
 
   next();

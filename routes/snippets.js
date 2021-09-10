@@ -6,7 +6,11 @@ const createError = require("http-errors");
 
 const Snippet = require("../models/Snippet");
 
-const MESSAGES = require("../constants/messages");
+const {
+  OK,
+  INVALID_ID,
+  INVALID_REQUEST,
+} = require("../constants/messages");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -26,13 +30,6 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   const { id } = req.params;
-
-  const {
-    OK,
-    INVALID_ID,
-    INVALID_REQUEST,
-    INTERNAL_SERVER_ERROR,
-  } = MESSAGES;
 
   try {
     const snippet = await Snippet.findById(id);
