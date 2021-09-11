@@ -14,7 +14,7 @@ const {
 const verifyToken = async (req, res, next) => {
   const token = req.cookies?.auth;
 
-  if (token === null) {
+  if (token === undefined) {
     next(createError(401, INVALID_TOKEN));
 
     return;
