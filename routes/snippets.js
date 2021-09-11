@@ -88,9 +88,11 @@ router.delete("/:id", async (req, res, next) => {
         return;
       }
 
-      const index = currentHashtag.snippetList.findIndex((snippet) => String(snippet) === String(snippetId));
+      const index = currentHashtag.snippetList.findIndex((targetId) => String(targetId) === String(snippetId));
 
-      if (index === -1) {
+      const hasHashtag = index !== -1;
+
+      if (!hasHashtag) {
         return;
       }
 
