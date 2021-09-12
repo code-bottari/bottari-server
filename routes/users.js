@@ -14,6 +14,7 @@ const {
   INVALID_TOKEN,
   NOT_FOUND,
   OK,
+  NO_AUTHORITY_TO_ACCESS,
 } = require("../constants/messages");
 
 const {
@@ -135,25 +136,31 @@ router.get("/:id", async (req, res, next) => {
 });
 
 router.patch("/:id", async (req, res, next) => {
+  const { id : userId } = req.params;
   const { nickname, imageUrl } = req.body;
   const { auth: token } = req.cookies;
 
-  const { _id: userId } = jwt.decode(token);
+  const { _id: decodedId } = jwt.decode(token);
 
   try {
+    if (userId !== decodedId) {
+      throw createError(403, NO_AUTHORITY_TO_ACCESS);
+    }
+
     if (nickname === undefined && imageUrl === undefined) {
       throw createError(422, INVALID_REQUEST);
     }
 
-    if (nickname && imageUrl) {
-      await User.findByIdAndUpdate(userId, { nickname, imageUrl });
-    } else if (nickname) {
-      await User.findByIdAndUpdate(userId, { nickname });
-    } else if (imageUrl) {
-      await User.findByIdAndUpdate(userId, { imageUrl });
-    }
+    const toBeUpdated = {};
 
-    res.status(200).send({ result: OK });
+    nickname && (toBeUpdated.nickname = nickname);
+    imageUrl && (toBeUpdated.imageUrl = imageUrl);
+
+    await User.findByIdAndUpdate(userId, toBeUpdated);
+
+    const updatedData = await User.findById(userId);
+
+    res.status(200).send({ result: OK, updatedData });
   } catch (error) {
     if (error.status) {
       next(error);
