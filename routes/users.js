@@ -120,31 +120,13 @@ router.post("/register", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
+
     const user = await User.findOne({ id });
 
-    const result = {
-      result: OK,
-      user,
-    };
-
-    res.status(200).send(result);
+    res.status(200).send({ result: OK, user });
   } catch (error) {
-    if (error instanceof mongoose.Error.ValidationError) {
-      next(createError(422, INVALID_REQUEST));
-
-      return;
-    }
-
-    const { code } = error;
-
-    if (code === AUTH_ID_TOKEN_REVOKED) {
-      next(createError(422, INVALID_TOKEN));
-
-      return;
-    }
-
-    if (code === AUTH_ID_TOKEN_EXPIRED) {
-      next(createError(401, EXPIRED_TOKEN));
+    if (error.status) {
+      next(error);
 
       return;
     }
