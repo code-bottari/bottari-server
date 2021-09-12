@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-
 const mongoose = require("mongoose");
 const createError = require("http-errors");
 const jwt = require("jsonwebtoken");
@@ -61,7 +60,6 @@ router.get("/:id", async (req, res, next) => {
 
 router.delete("/:id", async (req, res, next) => {
   const { id: snippetId } = req.params;
-
   const { auth: token } = req.cookies;
 
   const { _id: userId } = jwt.decode(token);
@@ -81,14 +79,12 @@ router.delete("/:id", async (req, res, next) => {
 
     await Snippet.findByIdAndDelete(snippetId);
 
-    const findAndDeleteHashtag = async (hashtag) => {
-      const currentHashtag = await Hashtag.findOne({ name: hashtag });
+    const matchedHashtags = await Hashtag.find({ $or: [{ name: "#some" }, { name: "#every" }, { name: "map" }, { name: "#reduce" },] });
 
-      if (currentHashtag === null) {
-        return;
-      }
+    const deleteSnippetId = async (hashtag) => {
+      const { snippetList } = hashtag;
 
-      const index = currentHashtag.snippetList.findIndex((targetId) => String(targetId) === String(snippetId));
+      const index = snippetList.findIndex((targetId) => String(targetId) === String(snippetId));
 
       const hasHashtag = index !== -1;
 
@@ -96,10 +92,14 @@ router.delete("/:id", async (req, res, next) => {
         return;
       }
 
-      await currentHashtag.save();
+      snippetList.splice(index, 1);
+
+      await hashtag.save();
     };
 
-    await Promise.all(hashtagList.map(async (hashtag) => await findAndDeleteHashtag(hashtag)));
+    const promises = matchedHashtags.map(async (hashtag) => await deleteSnippetId(hashtag));
+
+    await Promise.all(promises);
 
     res.send({ result: OK });
   } catch (error) {
