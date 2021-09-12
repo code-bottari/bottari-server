@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-const mongoose = require("mongoose");
 const admin = require("firebase-admin");
 const createError = require("http-errors");
 const jwt = require("jsonwebtoken");
@@ -124,6 +123,37 @@ router.get("/:id", async (req, res, next) => {
     const user = await User.findOne({ id });
 
     res.status(200).send({ result: OK, user });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+});
+
+router.patch("/:id", async (req, res, next) => {
+  const { nickname, imageUrl } = req.body;
+  const { auth: token } = req.cookies;
+
+  const { _id: userId } = jwt.decode(token);
+
+  try {
+    if (nickname === undefined && imageUrl === undefined) {
+      throw createError(422, INVALID_REQUEST);
+    }
+
+    if (nickname && imageUrl) {
+      await User.findByIdAndUpdate(userId, { nickname, imageUrl });
+    } else if (nickname) {
+      await User.findByIdAndUpdate(userId, { nickname });
+    } else if (imageUrl) {
+      await User.findByIdAndUpdate(userId, { imageUrl });
+    }
+
+    res.status(200).send({ result: OK });
   } catch (error) {
     if (error.status) {
       next(error);
