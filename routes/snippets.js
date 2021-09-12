@@ -71,7 +71,7 @@ router.delete("/:id", async (req, res, next) => {
       throw createError(404, NOT_FOUND);
     }
 
-    const { poster, hashtagList } = snippet;
+    const { poster } = snippet;
 
     if (poster !== userId) {
       throw createError(403, NO_AUTHORITY_TO_ACCESS);
