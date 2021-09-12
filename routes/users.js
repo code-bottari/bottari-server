@@ -1,7 +1,5 @@
 const express = require("express");
 const router = express.Router();
-
-const mongoose = require("mongoose");
 const admin = require("firebase-admin");
 const createError = require("http-errors");
 const jwt = require("jsonwebtoken");
