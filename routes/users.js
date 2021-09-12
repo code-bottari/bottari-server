@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+
 const admin = require("firebase-admin");
 const createError = require("http-errors");
 const jwt = require("jsonwebtoken");
@@ -13,6 +14,7 @@ const {
   INVALID_TOKEN,
   NOT_FOUND,
   OK,
+  NO_AUTHORITY_TO_ACCESS,
 } = require("../constants/messages");
 
 const {
@@ -122,6 +124,43 @@ router.get("/:id", async (req, res, next) => {
     const user = await User.findOne({ id });
 
     res.status(200).send({ result: OK, user });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+});
+
+router.patch("/:id", async (req, res, next) => {
+  const { id : userId } = req.params;
+  const { nickname, imageUrl } = req.body;
+  const { auth: token } = req.cookies;
+
+  const { _id: decodedId } = jwt.decode(token);
+
+  try {
+    if (userId !== decodedId) {
+      throw createError(403, NO_AUTHORITY_TO_ACCESS);
+    }
+
+    if (nickname === undefined && imageUrl === undefined) {
+      throw createError(422, INVALID_REQUEST);
+    }
+
+    const toBeUpdated = {};
+
+    nickname && (toBeUpdated.nickname = nickname);
+    imageUrl && (toBeUpdated.imageUrl = imageUrl);
+
+    await User.findByIdAndUpdate(userId, toBeUpdated);
+
+    const updatedData = await User.findById(userId);
+
+    res.status(200).send({ result: OK, updatedData });
   } catch (error) {
     if (error.status) {
       next(error);
