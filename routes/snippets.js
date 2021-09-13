@@ -17,16 +17,23 @@ const {
 } = require("../constants/messages");
 
 router.get("/", async (req, res, next) => {
+  const { language, hashtag } = req.query;
+
   try {
-    const { language } = req.query;
-    const snippetList = await Snippet.find({ language });
+    if (language) {
+      const snippetList = await Snippet.find({ language });
 
-    const result = {
-      result: MESSAGES.OK,
-      snippetList,
-    };
+      res.status(200).send({ result: OK , snippetList });
 
-    res.send(result);
+      return;
+    }
+
+    if (hashtag) {
+      const searched = await Hashtag.findOne({ name: hashtag });
+      const snippetList = searched.snippetList;
+
+      res.status(200).send({ result: OK , snippetList });
+    }
   } catch (error) {
     next(error);
   }
