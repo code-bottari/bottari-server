@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
-const { getSnippetList, getSnippet, deleteSnippet } = require("./controllers/snippets.controllers");
+const {
+  getSnippetList,
+  getSnippet,
+  deleteSnippet
+} = require("./controllers/snippets.controllers");
 
 const verifyToken = require("./middlewares/verifyToken");
 
