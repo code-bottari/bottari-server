@@ -1,6 +1,7 @@
 require("dotenv").config();
 require("./config/connectMongoose");
 require("./config/connectSlack");
+const connectSocketIo = require("./config/socketIo");
 
 const createError = require("http-errors");
 const express = require("express");
@@ -12,6 +13,9 @@ const users = require("./routes/users");
 const snippets = require("./routes/snippets");
 
 const app = express();
+
+app.io = require("socket.io")();
+connectSocketIo(app);
 
 app.use(logger("dev"));
 app.use(express.json());
