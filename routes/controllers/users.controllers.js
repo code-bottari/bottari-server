@@ -5,6 +5,8 @@ const User = require("../../models/User");
 
 const { decode } = require("../../services/usersService");
 
+const { SECRET_KEY } = require("../../config/envConfig");
+
 const {
   UNEXPECTED_ERROR,
   INVALID_REQUEST,
@@ -25,7 +27,7 @@ const verifyUserData = async (req, res, next) => {
     const hasUserData = user !== null;
 
     if (hasUserData) {
-      const token = jwt.sign(user._id, process.env.SECRET_KEY);
+      const token = jwt.sign(user._id, SECRET_KEY);
 
       res.cookie("auth", token, {
         maxAge: 1000 * 60 * 60, // hour = milliseconds * seconds * minutes
@@ -65,7 +67,7 @@ const registerUser = async (req, res, next) => {
       imageUrl,
     });
 
-    const token = jwt.sign(user._id, process.env.SECRET_KEY);
+    const token = jwt.sign(user._id, SECRET_KEY);
 
     res
       .cookie("auth", token, {
