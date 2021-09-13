@@ -5,7 +5,7 @@ const notification = mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ["like", "comment", "subscribe", "snippet"],
+    enum: ["like", "comment", "follower", "snippet"],
   },
   targetId: {
     type: ObjectId,
@@ -32,7 +32,7 @@ const userSchema = mongoose.Schema({
     required: false,
   },
   notificationList: [notification],
-  subscriberList: [{
+  followerList: [{
     type: ObjectId,
     ref: "User",
   }],
