@@ -17,8 +17,9 @@ const {
 } = require("../constants/messages");
 
 router.get("/", async (req, res, next) => {
+  const { language } = req.query;
+
   try {
-    const { language } = req.query;
     const snippetList = await Snippet.find({ language });
 
     res.status(200).send({ result: OK , snippetList });
@@ -28,8 +29,9 @@ router.get("/", async (req, res, next) => {
 });
 
 router.get("/", async (req, res, next) => {
+  const { hashtag } = req.query;
+
   try {
-    const { hashtag } = req.query;
     const searched = await Hashtag.findOne({ name: hashtag });
     const snippetList = searched.snippetList;
 
