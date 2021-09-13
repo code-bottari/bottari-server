@@ -117,6 +117,19 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
+router.get("/subscribe/:id", async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const users = await User.find();
+    const subscriberList = users.filter((user) => user.subscriberList.indexOf(id) !== -1);
+
+    res.status(200).send({ result: OK, subscriberList });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
