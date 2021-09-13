@@ -12,7 +12,7 @@ const {
   updateUserData,
 } = require("./controllers/users.controllers");
 
-router.get("/check-member", verifyUserData);
+router.get("/check-member/:idToken", verifyUserData);
 
 router.post("/register", registerUser);
 
