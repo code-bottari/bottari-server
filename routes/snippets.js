@@ -17,25 +17,23 @@ const {
 } = require("../constants/messages");
 
 router.get("/", async (req, res, next) => {
-  const { language } = req.query;
+  const { language, hashtag } = req.query;
 
   try {
-    const snippetList = await Snippet.find({ language });
+    if (language) {
+      const snippetList = await Snippet.find({ language });
 
-    res.status(200).send({ result: OK , snippetList });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.status(200).send({ result: OK , snippetList });
 
-router.get("/", async (req, res, next) => {
-  const { hashtag } = req.query;
+      return;
+    }
 
-  try {
-    const searched = await Hashtag.findOne({ name: hashtag });
-    const snippetList = searched.snippetList;
+    if (hashtag) {
+      const searched = await Hashtag.findOne({ name: hashtag });
+      const snippetList = searched.snippetList;
 
-    res.status(200).send({ result: OK , snippetList });
+      res.status(200).send({ result: OK , snippetList });
+    }
   } catch (error) {
     next(error);
   }
