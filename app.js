@@ -1,5 +1,6 @@
 require("./config/connectMongoose");
 require("./config/connectSlack");
+require("./config/firebaseAdmin");
 const connectSocketIo = require("./config/socketIo");
 
 const createError = require("http-errors");
