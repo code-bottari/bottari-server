@@ -25,7 +25,7 @@ const getSnippetList = async (req, res, next) => {
     language && (targets.language = language);
     hashtagList && (targets.hashtagList = { $all: hashtagList });
 
-    const snippetList = await Snippet.find(targets);
+    const snippetList = await Snippet.find(targets).populate(["creator", "poster"]);
 
     res
       .status(200)
