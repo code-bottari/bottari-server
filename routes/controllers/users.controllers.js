@@ -173,7 +173,9 @@ const updateUserData = async (req, res, next) => {
 
     const updatedUserData = await User.findByIdAndUpdate(userId, targets, { new: true });
 
-    res.status(200).send({ result: OK, updatedUserData });
+    res
+      .status(200)
+      .send({ result: OK, updatedUserData });
   } catch (error) {
     if (error.status) {
       next(error);

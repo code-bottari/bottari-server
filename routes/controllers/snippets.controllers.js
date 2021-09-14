@@ -53,11 +53,13 @@ const getSnippet = async (req, res, next) => {
   } catch (error) {
     if (error.status) {
       next(error);
+
       return;
     }
 
     if (error instanceof mongoose.Error.CastError) {
       next(createError(422, INVALID_REQUEST));
+
       return;
     }
 
