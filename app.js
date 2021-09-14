@@ -26,7 +26,7 @@ app.use(cookieParser());
 app.use((req, res, next) => {
   res.set({
     "Access-Control-Allow-Origin": CLIENT_URL,
-    "Access-Control-Allow-Headers": "content-type",
+    "Access-Control-Allow-Headers": "content-type, Authorization",
     "Access-Control-Allow-Credentials": true,
   });
 

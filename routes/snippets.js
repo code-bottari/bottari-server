@@ -13,6 +13,6 @@ router.get("/", getSnippetList);
 
 router.get("/:id", getSnippet);
 
-router.delete("/:id", verifyToken, deleteSnippet);
+router.delete("/", verifyToken, deleteSnippet);
 
 module.exports = router;

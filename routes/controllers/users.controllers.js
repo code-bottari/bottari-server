@@ -28,7 +28,7 @@ const verifyUserData = async (req, res, next) => {
     const hasUserData = user !== null;
 
     if (hasUserData) {
-      const token = jwt.sign(user._id, SECRET_KEY);
+      const token = jwt.sign(String(user._id), SECRET_KEY);
 
       res.cookie("auth", token, {
         maxAge: 1000 * 60 * 60, // hour = milliseconds * seconds * minutes
