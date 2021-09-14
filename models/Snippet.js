@@ -47,7 +47,7 @@ const snippetSchema = mongoose.Schema({
     type: ObjectId,
   }],
   hashtagList: [{
-    type: ObjectId,
+    type: String,
   }],
 });
 
