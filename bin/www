@@ -4,8 +4,8 @@ const server = require("http").createServer(app);
 
 const {
   CLIENT_URL,
-   PORT,
-   } = require("../config/envConfig");
+  PORT,
+} = require("../config/envConfig");
 
 app.io.attach(server, { cors: { origin: CLIENT_URL } });
 
