@@ -25,10 +25,10 @@ const verifyUserData = async (req, res, next) => {
 
     const user = await User.findOne({ email });
 
-    const hasUserData = user !== null;
+    const userId = user?.null;
 
-    if (hasUserData) {
-      const token = jwt.sign(String(user._id), SECRET_KEY);
+    if (userId) {
+      const token = jwt.sign(String(userId), SECRET_KEY);
 
       res.cookie("auth", token, {
         maxAge: 1000 * 60 * 60, // hour = milliseconds * seconds * minutes
@@ -38,7 +38,7 @@ const verifyUserData = async (req, res, next) => {
 
     res
       .status(200)
-      .send({ result: OK, hasUserData });
+      .send({ result: OK, userId });
   } catch (error) {
     if (error.status) {
       next(error);
