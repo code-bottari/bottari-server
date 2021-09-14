@@ -31,6 +31,7 @@ const snippetSchema = mongoose.Schema({
   commentList: [comment],
   createdAt: {
     type: Date,
+    default: Date.now(),
     required: true,
   },
   language: {
@@ -42,14 +43,12 @@ const snippetSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  likerList: {
-    type: Array,
-    required: true,
-  },
-  hashtagList: {
-    type: Array,
-    required: true,
-  },
+  likerList: [{
+    type: ObjectId,
+  }],
+  hashtagList: [{
+    type: ObjectId,
+  }],
 });
 
 module.exports = mongoose.model("Snippet", snippetSchema);
