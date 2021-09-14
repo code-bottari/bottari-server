@@ -127,16 +127,8 @@ const deleteSnippet = async (req, res, next) => {
   }
 };
 
-// {
-// 	creator: ObjectId,
-// 	createdAt: Date,
-// 	language: String,
-// 	code: String,
-// 	hashTagList: Array
-// }
-
 const createSnippet = async (req, res, next) => {
-  const { creator, poster, language, code } = req.body;
+  const { creator, poster, language, code, hashtagList } = req.body;
   const { auth: token } = req.cookies;
 
   const { _id: userId } = jwt.decode(token);
@@ -153,6 +145,7 @@ const createSnippet = async (req, res, next) => {
       poster,
       language,
       code,
+      hashtagList,
     });
 
     res.send({ result: OK, snippet: createdSnippet });
