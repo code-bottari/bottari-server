@@ -17,7 +17,8 @@ const {
 } = require("../../constants/messages");
 
 const verifyUserData = async (req, res, next) => {
-  const { idToken } = req.params;
+  const { authorization } = req.headers;
+  const idToken = authorization.split(" ")[1];
 
   try {
     const email = await decode(idToken);
