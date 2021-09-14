@@ -2,9 +2,14 @@ const app = require("../app");
 const debug = require("debug")("bottari-server:server");
 const server = require("http").createServer(app);
 
-app.io.attach(server, { cors: { origin: process.env.CLIENT_URL } });
+const {
+  CLIENT_URL,
+  PORT,
+} = require("../config/envConfig");
 
-const port = normalizePort(process.env.PORT || "3000");
+app.io.attach(server, { cors: { origin: CLIENT_URL } });
+
+const port = normalizePort(PORT || "3000");
 app.set("port", port);
 
 server.listen(port);

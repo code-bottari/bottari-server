@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const createError = require("http-errors");
 
+const { SECRET_KEY } = require("../../config/envConfig");
+
 const {
   EXPIRED_TOKEN,
   INVALID_TOKEN,
@@ -21,7 +23,7 @@ const verifyToken = async (req, res, next) => {
   }
 
   try {
-    jwt.verify(token, process.env.SECRET_KEY);
+    jwt.verify(token, SECRET_KEY);
   } catch (error) {
     const { name } = error;
 

@@ -1,123 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
-const createError = require("http-errors");
-const jwt = require("jsonwebtoken");
-
-const Snippet = require("../models/Snippet");
-const Hashtag = require("../models/Hashtag");
 
 const {
-  OK,
-  INVALID_ID,
-  INVALID_REQUEST,
-  NO_AUTHORITY_TO_ACCESS,
-  NOT_FOUND,
-  UNEXPECTED_ERROR,
-} = require("../constants/messages");
+  getSnippetList,
+  getSnippet,
+  deleteSnippet
+} = require("./controllers/snippets.controllers");
 
-router.get("/", async (req, res, next) => {
-  const { language, hashtag } = req.query;
+const verifyToken = require("./middlewares/verifyToken");
 
-  try {
-    if (language) {
-      const snippetList = await Snippet.find({ language });
+router.get("/", getSnippetList);
 
-      res.status(200).send({ result: OK , snippetList });
+router.get("/:id", getSnippet);
 
-      return;
-    }
-
-    if (hashtag) {
-      const searched = await Hashtag.findOne({ name: hashtag });
-      const snippetList = searched.snippetList;
-
-      res.status(200).send({ result: OK , snippetList });
-    }
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/:id", async (req, res, next) => {
-  const { id } = req.params;
-
-  try {
-    const snippet = await Snippet.findById(id);
-
-    if (snippet === null) {
-      throw createError(404, INVALID_ID);
-    }
-
-    res.send({ result: OK, ...snippet.toObject() });
-  } catch (error) {
-    if (error.status) {
-      next(error);
-      return;
-    }
-
-    if (error instanceof mongoose.Error.CastError) {
-      next(createError(422, INVALID_REQUEST));
-      return;
-    }
-
-    next({ message: INTERNAL_SERVER_ERROR });
-  }
-});
-
-router.delete("/:id", async (req, res, next) => {
-  const { id: snippetId } = req.params;
-  const { auth: token } = req.cookies;
-
-  const { _id: userId } = jwt.decode(token);
-
-  try {
-    const snippet = await Snippet.findById(snippetId);
-
-    if (snippet === null) {
-      throw createError(404, NOT_FOUND);
-    }
-
-    const { poster } = snippet;
-
-    if (poster !== userId) {
-      throw createError(403, NO_AUTHORITY_TO_ACCESS);
-    }
-
-    await Snippet.findByIdAndDelete(snippetId);
-
-    const matchedHashtags = await Hashtag.find({ $or: [{ name: "#some" }, { name: "#every" }, { name: "map" }, { name: "#reduce" },] });
-
-    const deleteSnippetId = async (hashtag) => {
-      const { snippetList } = hashtag;
-
-      const index = snippetList.findIndex((targetId) => String(targetId) === String(snippetId));
-
-      const hasHashtag = index !== -1;
-
-      if (!hasHashtag) {
-        return;
-      }
-
-      snippetList.splice(index, 1);
-
-      await hashtag.save();
-    };
-
-    const promises = matchedHashtags.map(async (hashtag) => await deleteSnippetId(hashtag));
-
-    await Promise.all(promises);
-
-    res.send({ result: OK });
-  } catch (error) {
-    if (error.status) {
-      next(error);
-
-      return;
-    }
-
-    next({ message: UNEXPECTED_ERROR });
-  }
-});
+router.delete("/:id", verifyToken, deleteSnippet);
 
 module.exports = router;
