@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const mongoose = require("mongoose");
 
-const MONGO_URL = process.env.MONGO_URL;
+const { MONGO_URL } = require("./envConfig");
 
 mongoose.connect(MONGO_URL);
 
