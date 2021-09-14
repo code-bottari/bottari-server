@@ -127,8 +127,49 @@ const deleteSnippet = async (req, res, next) => {
   }
 };
 
+// {
+// 	creator: ObjectId,
+// 	createdAt: Date,
+// 	language: String,
+// 	code: String,
+// 	hashTagList: Array
+// }
+
+const createSnippet = async (req, res, next) => {
+  const { creator, poster, language, code } = req.body;
+  const { auth: token } = req.cookies;
+
+  const { _id: userId } = jwt.decode(token);
+
+  try {
+    const inValidUser = String(userId) !== String(creator);
+
+    if (inValidUser) {
+      throw createError(403, NO_AUTHORITY_TO_ACCESS);
+    }
+
+    const createdSnippet = await Snippet.create({
+      creator,
+      poster,
+      language,
+      code,
+    });
+
+    res.send({ result: OK, snippet: createdSnippet });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+};
+
 module.exports = {
   getSnippetList,
   getSnippet,
   deleteSnippet,
+  createSnippet,
 };
