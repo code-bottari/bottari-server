@@ -15,13 +15,14 @@ const {
 } = require("../../constants/messages");
 
 const getSnippetList = async (req, res, next) => {
-  const { language, search } = req.query;
+  const { userId, language, search } = req.query;
 
   const hashtagList = search?.split(" ");
 
   try {
     const targets = {};
 
+    userId && (targets.poster = userId);
     language && (targets.language = language);
     hashtagList && (targets.hashtagList = { $all: hashtagList });
 
@@ -68,7 +69,7 @@ const getSnippet = async (req, res, next) => {
 };
 
 const deleteSnippet = async (req, res, next) => {
-  const { id: snippetId } = req.params;
+  const { id: snippetId } = req.body;
   const { auth: token } = req.cookies;
 
   const { _id: userId } = jwt.decode(token);
