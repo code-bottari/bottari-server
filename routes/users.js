@@ -6,6 +6,7 @@ const verifyToken = require("./middlewares/verifyToken");
 const {
   verifyUserData,
   registerUser,
+  logout,
   getNotification,
   getFollowingUsers,
   getUserData,
@@ -15,6 +16,8 @@ const {
 router.post("/check-member", verifyUserData);
 
 router.post("/register", registerUser);
+
+router.get("/logout", logout);
 
 router.get("/notification", verifyToken, getNotification);
 

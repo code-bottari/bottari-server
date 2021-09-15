@@ -86,6 +86,13 @@ const registerUser = async (req, res, next) => {
   }
 };
 
+const logout = (req, res, next) => {
+  res
+    .cookie("auth", "")
+    .status(200)
+    .send({ result: OK });
+};
+
 const getNotification = async (req, res, next) => {
   const token = req.cookies.auth;
 
@@ -190,6 +197,7 @@ const updateUserData = async (req, res, next) => {
 module.exports = {
   verifyUserData,
   registerUser,
+  logout,
   getNotification,
   getFollowingUsers,
   getUserData,
