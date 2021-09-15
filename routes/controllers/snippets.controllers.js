@@ -149,6 +149,29 @@ const createSnippet = async (req, res, next) => {
       hashtagList,
     });
 
+    const transformedHashtagList = Array.from(hashtagList, (hashtag) => ({ name: hashtag }));
+    const targets = { $or: transformedHashtagList };
+
+    const matchedHashtags = await Hashtag.find(targets);
+
+    matchedHashtags.forEach(async (hashtag) => {
+      hashtag.snippetList.push(createdSnippet._id);
+      await hashtag.save();
+    });
+
+    const matchedHashtagNames = matchedHashtags.map((hashtag) => hashtag.name);
+    const unmatchedHashtags = transformedHashtagList.filter((hashtag) => !matchedHashtagNames.includes(hashtag.name));
+
+    if (unmatchedHashtags.length) {
+      const createHashtagList = Array.from(unmatchedHashtags, (hashtag) => {
+        hashtag.snippetList = createdSnippet._id;
+
+        return hashtag;
+      });
+
+      await Hashtag.insertMany(createHashtagList);
+    }
+
     res.send({ result: OK, snippet: createdSnippet });
   } catch (error) {
     if (error.status) {
