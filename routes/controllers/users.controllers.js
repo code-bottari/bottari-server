@@ -25,7 +25,7 @@ const verifyUserData = async (req, res, next) => {
 
     const user = await User.findOne({ email });
 
-    const userId = user?.null;
+    const userId = user?._id;
 
     if (userId) {
       const token = jwt.sign(String(userId), SECRET_KEY);
