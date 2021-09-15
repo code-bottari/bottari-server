@@ -52,15 +52,15 @@ const registerUser = async (req, res, next) => {
   const { idToken, nickname, imageUrl } = req.body;
 
   try {
-    const isValid = (idToken === undefined)
+    const isInvalid = (idToken === undefined)
       || (nickname === undefined)
       || (imageUrl === undefined);
 
-    if (!isValid) {
+    if (isInvalid) {
       throw createError(422, INVALID_REQUEST);
     }
 
-    const email = decode(idToken);
+    const email = await decode(idToken);
 
     const user = await User.create({
       email,
