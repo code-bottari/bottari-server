@@ -15,7 +15,8 @@ const {
 } = require("../../constants/messages");
 
 const getSnippetList = async (req, res, next) => {
-  const { userId, language, search } = req.query;
+  const { userId } = req.params;
+  const { language, search } = req.query;
 
   const hashtagList = search?.split(" ");
 
@@ -127,8 +128,42 @@ const deleteSnippet = async (req, res, next) => {
   }
 };
 
+const createSnippet = async (req, res, next) => {
+  const { creator, poster, language, code, hashtagList } = req.body;
+  const { auth: token } = req.cookies;
+
+  const { _id: userId } = jwt.decode(token);
+
+  try {
+    const inValidUser = String(userId) !== String(poster);
+
+    if (inValidUser) {
+      throw createError(403, NO_AUTHORITY_TO_ACCESS);
+    }
+
+    const createdSnippet = await Snippet.create({
+      creator,
+      poster,
+      language,
+      code,
+      hashtagList,
+    });
+
+    res.send({ result: OK, snippet: createdSnippet });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+};
+
 module.exports = {
   getSnippetList,
   getSnippet,
   deleteSnippet,
+  createSnippet,
 };
