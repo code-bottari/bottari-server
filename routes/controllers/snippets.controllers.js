@@ -15,7 +15,8 @@ const {
 } = require("../../constants/messages");
 
 const getSnippetList = async (req, res, next) => {
-  const { userId, language, search } = req.query;
+  const { userId } = req.params;
+  const { language, search } = req.query;
 
   const hashtagList = search?.split(" ");
 
@@ -134,7 +135,7 @@ const createSnippet = async (req, res, next) => {
   const { _id: userId } = jwt.decode(token);
 
   try {
-    const inValidUser = String(userId) !== String(creator);
+    const inValidUser = String(userId) !== String(poster);
 
     if (inValidUser) {
       throw createError(403, NO_AUTHORITY_TO_ACCESS);
