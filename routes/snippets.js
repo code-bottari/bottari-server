@@ -16,6 +16,6 @@ router.get("/:id", getSnippet);
 
 router.delete("/", verifyToken, deleteSnippet);
 
-router.post("/new", createSnippet);
+router.post("/new", verifyToken, createSnippet);
 
 module.exports = router;
