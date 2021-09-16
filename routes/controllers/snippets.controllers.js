@@ -40,8 +40,8 @@ const getSnippetList = async (req, res, next) => {
 };
 
 const shareSnippet = (req, res, next) => {
-  const { nickname, language, code, hashTags } = req.body;
-  snippetStorage[nickname] = { language, code, hashTags };
+  const { nickname, language, code, hashtags } = req.body;
+  snippetStorage[nickname] = { language, code, hashtags };
 
   res
     .status(200)
