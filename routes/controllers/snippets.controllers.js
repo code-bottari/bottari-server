@@ -216,10 +216,10 @@ const createComment = async (req, res, next) => {
 };
 
 const deleteComment = async (req, res, next) => {
-  const { commentId, snippetId } = req.body;
+  const { userId, commentId, snippetId } = req.body;
   const { auth: token } = req.cookies;
 
-  const { _id: decodedId } = jwt.decode(token);
+  const decodedId = jwt.decode(token);
 
   try {
     const inValidUser = String(userId) !== String(decodedId);
