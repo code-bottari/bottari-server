@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 const { App } = require("@slack/bolt");
 
+const SlackToken = require("../models/SlackToken");
+
 const modalTemplate = require("./modal.json");
 
 const {
@@ -45,12 +47,12 @@ const changeType = (language) => {
   const channelStorage = {};
 
   app.command("/code", async ({ ack, body, client, logger }) => {
+    await ack();
+
     const {
       channel_id: channelId,
       trigger_id: triggerId,
     } = body;
-
-    await ack();
 
     try {
       const result = await client.views.open({
@@ -73,6 +75,9 @@ const changeType = (language) => {
   app.view("codeModal", async ({ ack, body, view, client, logger }) => {
     await ack();
 
+    const { id: teamId } = body.team;
+    const { accessToken } = await SlackToken.findOne({ teamId });
+
     const name = view.state.values.title.input.value;
     const message = view.state.values.message.input.value;
     const language = view.state.values.language.select.selected_option.text.text;
@@ -83,9 +88,10 @@ const changeType = (language) => {
     const channelId = channelStorage[viewId];
 
     const filetype = changeType(language);
+
     try {
       const result = await client.files.upload({
-        token: token,
+        token: accessToken,
         channels: channelId,
         initial_comment: message,
         filename: name,
@@ -99,7 +105,29 @@ const changeType = (language) => {
       console.log(result);
     }
     catch (error) {
-      console.error(error);
+      const { error: message } = error.data;
+
+      if (message === "not_in_channel") {
+        await app.client.chat.postMessage({
+          token: accessToken,
+          channel: channelId,
+          text: "이 채널에 저를 추가해 주세요!"
+        });
+
+        return;
+      }
+
+      logger.error(error);
+    }
+  });
+
+  app.event("app_uninstalled", async ({ body }) => {
+    const { team_id: teamId } = body;
+
+    try {
+      await SlackToken.deleteOne({ teamId });
+    } catch (error) {
+      console.log(error);
     }
   });
 
@@ -107,3 +135,5 @@ const changeType = (language) => {
     console.log(error);
   });
 })();
+
+module.exports = app;
