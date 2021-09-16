@@ -12,9 +12,15 @@ const {
   INVALID_REQUEST,
   INVALID_TOKEN,
   NOT_FOUND,
-  OK,
   NO_AUTHORITY_TO_ACCESS,
+  UNPROCESSABLE_ENTITY,
+  OK,
 } = require("../../constants/messages");
+
+const {
+  ADD,
+  REMOVE,
+} = require("../../constants/names");
 
 const verifyUserData = async (req, res, next) => {
   const { authorization } = req.headers;
@@ -135,6 +141,60 @@ const getFollowingUsers = async (req, res, next) => {
   }
 };
 
+const handleFollowData = async (req, res, next) => {
+  const { id: targetId } = req.params;
+  const { taskType } = req.body;
+  const { auth: token } = req.cookies;
+
+  const userId = jwt.decode(token);
+
+  try {
+    if (targetId === userId) {
+      throw createError(403, NO_AUTHORITY_TO_ACCESS);
+    }
+
+    if (taskType === undefined) {
+      throw createError(422, UNPROCESSABLE_ENTITY);
+    }
+
+    const targetUser = await User.findById(targetId);
+
+    const hasUserData = targetUser !== null;
+
+    if (!hasUserData) {
+      throw createError(404, NOT_FOUND);
+    }
+
+    const { followerList } = targetUser;
+
+    const hasUserId = followerList.includes(userId);
+
+    if (taskType === ADD && !hasUserId) {
+      followerList.push(userId);
+    }
+
+    if (taskType === REMOVE && hasUserId) {
+      const index = followerList.findIndex((followerId) => String(followerId) === String(userId));
+
+      followerList.splice(index, 1);
+    }
+
+    await targetUser.save();
+
+    res
+      .status(200)
+      .send({ result: OK, followerNumber: followerList.length });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+};
+
 const getUserData = async (req, res, next) => {
   const { id } = req.params;
 
@@ -200,6 +260,7 @@ module.exports = {
   logout,
   getNotification,
   getFollowingUsers,
+  handleFollowData,
   getUserData,
   updateUserData,
 };
