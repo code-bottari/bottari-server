@@ -7,7 +7,6 @@ const {
   SLACK_SIGNING_SECRET,
   SLACK_BOT_TOKEN,
   SLACK_APP_TOKEN,
-  PORT,
 } = require("./envConfig");
 
 const app = new App({
@@ -18,10 +17,29 @@ const app = new App({
 });
 
 (async () => {
-  await app.start(PORT || 3000);
+  await app.start();
 
   console.log("⚡️ Bolt app is running!");
 })();
+
+const changeType = (language) => {
+  const filetypes = {
+    Python: "python",
+    Java: "java",
+    JavaScript: "javascript",
+    CSS: "css",
+    C: "c",
+    "C++": "cpp",
+    "C#": "csharp",
+    PHP: "php",
+    R: "r",
+    "Objective-C": "objc",
+  };
+
+  const filetype = filetypes[language];
+
+  return filetype;
+};
 
 (function () {
   const channelStorage = {};
@@ -55,22 +73,33 @@ const app = new App({
   app.view("codeModal", async ({ ack, body, view, client, logger }) => {
     await ack();
 
-    const hashTag = view.state.values.hashTag.input.value;
+    const name = view.state.values.title.input.value;
+    const message = view.state.values.message.input.value;
     const language = view.state.values.language.select.selected_option.text.text;
-    const spaces = view.state.values.spaces.select.selected_option.text.text;
-    const snippet = view.state.values.snippet.input.value;
+    const code = view.state.values.snippet.input.value;
 
     const { id: viewId } = view;
 
     const channelId = channelStorage[viewId];
 
+    const filetype = changeType(language);
     try {
-      await client.chat.postMessage({
-        channel: channelId,
-        text: snippet,
+      const result = await client.files.upload({
+        token: token,
+        channels: channelId,
+        initial_comment: message,
+        filename: name,
+        title: name,
+        content: code,
+        filetype,
       });
-    } catch (error) {
-      logger.error(error);
+
+      delete channelStorage[viewId];
+
+      console.log(result);
+    }
+    catch (error) {
+      console.error(error);
     }
   });
 

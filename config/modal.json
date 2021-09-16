@@ -10,49 +10,36 @@
   "blocks": [
     {
       "type": "input",
-      "block_id": "hashTag",
+      "block_id": "title",
       "element": {
         "type": "plain_text_input",
         "action_id": "input",
         "placeholder": {
           "type": "plain_text",
-          "text": "#HashTag"
+          "text": "file name"
         }
       },
       "label": {
         "type": "plain_text",
-        "text": "Hash Tag"
+        "text": "Title"
       }
     },
     {
-      "type": "context",
-      "elements": [
-        {
+      "type": "input",
+      "block_id": "message",
+      "element": {
+        "type": "plain_text_input",
+        "action_id": "input",
+        "multiline": true,
+        "placeholder": {
           "type": "plain_text",
-          "text": "- Pascal Case",
-          "emoji": true
+          "text": "message"
         }
-      ]
-    },
-    {
-      "type": "context",
-      "elements": [
-        {
-          "type": "plain_text",
-          "text": "- Hash Tag 수 5개 이하",
-          "emoji": true
-        }
-      ]
-    },
-    {
-      "type": "context",
-      "elements": [
-        {
-          "type": "plain_text",
-          "text": "- Hash Tag당 15글자 이하",
-          "emoji": true
-        }
-      ]
+      },
+      "label": {
+        "type": "plain_text",
+        "text": "Message"
+      }
     },
     {
       "type": "input",
@@ -92,7 +79,7 @@
           {
             "text": {
               "type": "plain_text",
-              "text": "C#",
+              "text": "CSS",
               "emoji": true
             },
             "value": "value_3"
@@ -100,7 +87,7 @@
           {
             "text": {
               "type": "plain_text",
-              "text": "C/C++",
+              "text": "C",
               "emoji": true
             },
             "value": "value_4"
@@ -108,7 +95,7 @@
           {
             "text": {
               "type": "plain_text",
-              "text": "PHP",
+              "text": "C++",
               "emoji": true
             },
             "value": "value_5"
@@ -116,7 +103,7 @@
           {
             "text": {
               "type": "plain_text",
-              "text": "R",
+              "text": "C#",
               "emoji": true
             },
             "value": "value_6"
@@ -124,10 +111,26 @@
           {
             "text": {
               "type": "plain_text",
-              "text": "Objective-C",
+              "text": "PHP",
               "emoji": true
             },
             "value": "value_7"
+          },
+          {
+            "text": {
+              "type": "plain_text",
+              "text": "R",
+              "emoji": true
+            },
+            "value": "value_8"
+          },
+          {
+            "text": {
+              "type": "plain_text",
+              "text": "Objective-C",
+              "emoji": true
+            },
+            "value": "value_9"
           }
         ],
         "action_id": "select"
@@ -140,42 +143,6 @@
     },
     {
       "type": "input",
-      "block_id": "spaces",
-      "element": {
-        "type": "static_select",
-        "placeholder": {
-          "type": "plain_text",
-          "text": "Select spaces",
-          "emoji": true
-        },
-        "options": [
-          {
-            "text": {
-              "type": "plain_text",
-              "text": "2",
-              "emoji": true
-            },
-            "value": "value_0"
-          },
-          {
-            "text": {
-              "type": "plain_text",
-              "text": "4",
-              "emoji": true
-            },
-            "value": "value_1"
-          }
-        ],
-        "action_id": "select"
-      },
-      "label": {
-        "type": "plain_text",
-        "text": "Tab",
-        "emoji": true
-      }
-    },
-    {
-      "type": "input",
       "block_id": "snippet",
       "element": {
         "type": "plain_text_input",
@@ -183,7 +150,7 @@
         "multiline": true,
         "placeholder": {
           "type": "plain_text",
-          "text": "const foo = \"bar\";"
+          "text": "여기에 코드를 작성해 주세요"
         }
       },
       "label": {
