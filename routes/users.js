@@ -9,6 +9,7 @@ const {
   logout,
   getNotification,
   getFollowingUsers,
+  handleFollowData,
   getUserData,
   updateUserData,
 } = require("./controllers/users.controllers");
@@ -22,6 +23,8 @@ router.get("/logout", logout);
 router.get("/notification", verifyToken, getNotification);
 
 router.get("/following/:id", getFollowingUsers);
+
+router.patch("/follower/:id", handleFollowData);
 
 router.get("/:id", getUserData);
 
