@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 const { App } = require("@slack/bolt");
+const createError = require("http-errors");
 
 const SlackToken = require("../models/SlackToken");
 
@@ -10,6 +11,19 @@ const {
   SLACK_BOT_TOKEN,
   SLACK_APP_TOKEN,
 } = require("./envConfig");
+
+const PYTHON = "python";
+const JAVA = "java";
+const JAVASCRIPT = "javascript";
+const CSS = "css";
+const C = "c";
+const CPP = "cpp";
+const CSHARP = "csharp";
+const PHP = "php";
+const R = "r";
+const OBJECTIVE_C = "objc";
+const NOT_IN_CHANNEL = "not_in_channel";
+const REQUEST_ADDING_TO_CHANNEL = "이 채널에 저를 추가해 주세요!😵";
 
 const app = new App({
   signingSecret: SLACK_SIGNING_SECRET,
@@ -26,16 +40,16 @@ const app = new App({
 
 const changeType = (language) => {
   const filetypes = {
-    Python: "python",
-    Java: "java",
-    JavaScript: "javascript",
-    CSS: "css",
-    C: "c",
-    "C++": "cpp",
-    "C#": "csharp",
-    PHP: "php",
-    R: "r",
-    "Objective-C": "objc",
+    Python: PYTHON,
+    Java: JAVA,
+    JavaScript: JAVASCRIPT,
+    CSS: CSS,
+    C: C,
+    "C++": CPP,
+    "C#": CSHARP,
+    PHP: PHP,
+    R: R,
+    "Objective-C": OBJECTIVE_C,
   };
 
   const filetype = filetypes[language];
@@ -45,6 +59,7 @@ const changeType = (language) => {
 
 (function () {
   const channelStorage = {};
+  const snippetStorage = {};
 
   app.command("/code", async ({ ack, body, client, logger }) => {
     await ack();
@@ -75,21 +90,24 @@ const changeType = (language) => {
   app.view("codeModal", async ({ ack, body, view, client, logger }) => {
     await ack();
 
-    const { id: teamId } = body.team;
-    const { accessToken } = await SlackToken.findOne({ teamId });
-
     const name = view.state.values.title.input.value;
     const message = view.state.values.message.input.value;
     const language = view.state.values.language.select.selected_option.text.text;
     const code = view.state.values.snippet.input.value;
 
     const { id: viewId } = view;
-
     const channelId = channelStorage[viewId];
 
     const filetype = changeType(language);
 
+    const { id: teamId } = body.team;
+    let accessToken = "";
+
     try {
+      const slackToken = await SlackToken.findOne({ teamId });
+
+      accessToken = slackToken.accessToken;
+
       const result = await client.files.upload({
         token: accessToken,
         channels: channelId,
@@ -107,11 +125,11 @@ const changeType = (language) => {
     catch (error) {
       const { error: message } = error.data;
 
-      if (message === "not_in_channel") {
+      if (message === NOT_IN_CHANNEL) {
         await app.client.chat.postMessage({
           token: accessToken,
           channel: channelId,
-          text: "이 채널에 저를 추가해 주세요!"
+          text: REQUEST_ADDING_TO_CHANNEL,
         });
 
         return;
@@ -131,9 +149,75 @@ const changeType = (language) => {
     }
   });
 
+  app.command("/share", async ({ ack, body, client, logger }) => {
+    await ack();
+
+    const { text: nickname, team_id: teamId, channel_id: channelId } = body;
+
+    let accessToken = "";
+
+    try {
+      const slackToken = await SlackToken.findOne({ teamId });
+
+      accessToken = slackToken.accessToken;
+
+      const snippetData = snippetStorage[nickname];
+
+      if (!snippetData) {
+        throw createError(404, `${nickname}님의 공유된 스니펫이 없습니다.🤭`);
+      }
+
+      const { language, code, hashTags: name } = snippetData;
+
+      const filetype = changeType(language);
+
+      const result = await client.files.upload({
+        token: accessToken,
+        channels: channelId,
+        initial_comment: `${nickname}님이 공유한 스니펫입니다.💡`,
+        filename: name,
+        title: name,
+        content: code,
+        filetype,
+      });
+
+      delete snippetStorage[nickname];
+
+      console.log(result);
+    } catch (error) {
+      console.log(accessToken);
+      if (error.status === 404) {
+        await app.client.chat.postMessage({
+          token: accessToken,
+          channel: channelId,
+          text: error.message,
+        });
+
+        return;
+      }
+
+      if (!error.data) {
+        return;
+      }
+
+      const { error: message } = error.data;
+
+      if (message === NOT_IN_CHANNEL) {
+        await app.client.chat.postMessage({
+          token: accessToken,
+          channel: channelId,
+          text: REQUEST_ADDING_TO_CHANNEL,
+        });
+
+        return;
+      }
+
+      logger.error(error);
+    }
+  });
+
   app.error(async (error) => {
     console.log(error);
   });
+  module.exports = { app, snippetStorage };
 })();
-
-module.exports = app;

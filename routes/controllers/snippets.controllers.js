@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const Snippet = require("../../models/Snippet");
 const Hashtag = require("../../models/Hashtag");
 
+const { snippetStorage } = require("../../config/connectSlack");
+
 const {
   INVALID_ID,
   INVALID_REQUEST,
@@ -35,6 +37,15 @@ const getSnippetList = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+const shareSnippet = (req, res, next) => {
+  const { nickname, language, code, hashTags } = req.body;
+  snippetStorage[nickname] = { language, code, hashTags };
+
+  res
+    .status(200)
+    .send({ result: OK });
 };
 
 const getSnippet = async (req, res, next) => {
@@ -186,6 +197,7 @@ const createSnippet = async (req, res, next) => {
 
 module.exports = {
   getSnippetList,
+  shareSnippet,
   getSnippet,
   deleteSnippet,
   createSnippet,
