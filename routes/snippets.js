@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   getSnippetList,
+  shareSnippet,
   getSnippet,
   deleteSnippet,
   createSnippet,
@@ -13,6 +14,8 @@ const verifyToken = require("./middlewares/verifyToken");
 router.get("/", getSnippetList);
 
 router.get("/:id", getSnippet);
+
+router.post("/", shareSnippet);
 
 router.delete("/", verifyToken, deleteSnippet);
 
