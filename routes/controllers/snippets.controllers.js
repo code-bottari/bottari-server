@@ -73,7 +73,7 @@ const deleteSnippet = async (req, res, next) => {
   const { id: snippetId } = req.body;
   const { auth: token } = req.cookies;
 
-  const { _id: userId } = jwt.decode(token);
+  const userId = jwt.decode(token);
 
   try {
     const snippet = await Snippet.findById(snippetId);
@@ -84,7 +84,7 @@ const deleteSnippet = async (req, res, next) => {
 
     const { poster } = snippet;
 
-    if (poster !== userId) {
+    if (String(poster) !== userId) {
       throw createError(403, NO_AUTHORITY_TO_ACCESS);
     }
 
@@ -132,7 +132,7 @@ const createSnippet = async (req, res, next) => {
   const { creator, poster, language, code, hashtagList } = req.body;
   const { auth: token } = req.cookies;
 
-  const { _id: userId } = jwt.decode(token);
+  const userId = jwt.decode(token);
 
   try {
     const inValidUser = String(userId) !== String(poster);
