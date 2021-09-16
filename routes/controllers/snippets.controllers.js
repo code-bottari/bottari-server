@@ -37,6 +37,20 @@ const getSnippetList = async (req, res, next) => {
   }
 };
 
+const getUserSnippetList = async (req, res, next) => {
+  const { id: userId } = req.params;
+
+  try {
+    const snippetList = await Snippet.find({ "poster": { "_id": `${userId}` } }).populate(["creator", "poster"]);
+
+    res
+      .status(200)
+      .send({ result: OK, snippetList });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getSnippet = async (req, res, next) => {
   const { id } = req.params;
 
@@ -252,6 +266,7 @@ const deleteComment = async (req, res, next) => {
 
 module.exports = {
   getSnippetList,
+  getUserSnippetList,
   getSnippet,
   deleteSnippet,
   createSnippet,
