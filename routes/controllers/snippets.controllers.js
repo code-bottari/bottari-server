@@ -203,7 +203,9 @@ const createComment = async (req, res, next) => {
       { new: true }
     );
 
-    res.send({ result: OK });
+    res
+      .status(200)
+      .send({ result: OK });
   } catch (error) {
     if (error.status) {
       next(error);
@@ -234,7 +236,9 @@ const deleteComment = async (req, res, next) => {
       { new: true }
     );
 
-    res.send({ result: OK });
+    res
+      .status(200)
+      .send({ result: OK });
   } catch (error) {
     if (error.status) {
       next(error);
