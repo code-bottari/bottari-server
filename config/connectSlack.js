@@ -167,7 +167,7 @@ const changeType = (language) => {
         throw createError(404, `${nickname}님의 공유된 스니펫이 없습니다.🤭`);
       }
 
-      const { language, code, hashTags: name } = snippetData;
+      const { language, code, hashtags: name } = snippetData;
 
       const filetype = changeType(language);
 
