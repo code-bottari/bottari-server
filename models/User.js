@@ -7,10 +7,14 @@ const notification = mongoose.Schema({
     required: true,
     enum: ["like", "comment", "follower", "snippet"],
   },
-  targetId: {
+  user: {
     type: ObjectId,
     required: true,
     ref: "User",
+  },
+  targetId: {
+    type: ObjectId,
+    required: true,
   },
   isChecked: {
     type: Boolean,

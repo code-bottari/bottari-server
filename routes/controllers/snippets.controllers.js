@@ -70,7 +70,7 @@ const shareSnippet = async (req, res, next) => {
 
     next({ message: UNEXPECTED_ERROR });
   }
-}
+};
 
 const getUserSnippetList = async (req, res, next) => {
   const { id: userId } = req.params;
