@@ -185,7 +185,6 @@ const changeType = (language) => {
 
       console.log(result);
     } catch (error) {
-      console.log(accessToken);
       if (error.status === 404) {
         await app.client.chat.postMessage({
           token: accessToken,
@@ -219,5 +218,6 @@ const changeType = (language) => {
   app.error(async (error) => {
     console.log(error);
   });
+
   module.exports = { app, snippetStorage };
 })();
