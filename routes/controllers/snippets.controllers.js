@@ -14,8 +14,14 @@ const {
   NO_AUTHORITY_TO_ACCESS,
   NOT_FOUND,
   UNEXPECTED_ERROR,
+  UNPROCESSABLE_ENTITY,
   OK,
 } = require("../../constants/messages");
+
+const {
+  ADD,
+  REMOVE,
+} = require("../../constants/names");
 
 const getSnippetList = async (req, res, next) => {
   const { userId } = req.params;
@@ -64,6 +70,20 @@ const shareSnippet = async (req, res, next) => {
 
     next({ message: UNEXPECTED_ERROR });
   }
+}
+
+const getUserSnippetList = async (req, res, next) => {
+  const { id: userId } = req.params;
+
+  try {
+    const snippetList = await Snippet.find({ "poster": { "_id": `${userId}` } }).populate(["creator", "poster"]);
+
+    res
+      .status(200)
+      .send({ result: OK, snippetList });
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getSnippet = async (req, res, next) => {
@@ -102,7 +122,7 @@ const deleteSnippet = async (req, res, next) => {
   const { id: snippetId } = req.body;
   const { auth: token } = req.cookies;
 
-  const { _id: userId } = jwt.decode(token);
+  const userId = jwt.decode(token);
 
   try {
     const snippet = await Snippet.findById(snippetId);
@@ -113,7 +133,7 @@ const deleteSnippet = async (req, res, next) => {
 
     const { poster } = snippet;
 
-    if (poster !== userId) {
+    if (String(poster) !== userId) {
       throw createError(403, NO_AUTHORITY_TO_ACCESS);
     }
 
@@ -161,7 +181,7 @@ const createSnippet = async (req, res, next) => {
   const { creator, poster, language, code, hashtagList } = req.body;
   const { auth: token } = req.cookies;
 
-  const { _id: userId } = jwt.decode(token);
+  const userId = jwt.decode(token);
 
   try {
     const inValidUser = String(userId) !== String(poster);
@@ -213,10 +233,130 @@ const createSnippet = async (req, res, next) => {
   }
 };
 
+const handleLikeData = async (req, res, next) => {
+  const { id: targetId } = req.params;
+  const { taskType } = req.body;
+  const { auth: token } = req.cookies;
+
+  const userId = jwt.decode(token);
+
+  try {
+    if (taskType === undefined) {
+      throw createError(422, UNPROCESSABLE_ENTITY);
+    }
+
+    const targetSnippet = await Snippet.findById(targetId);
+
+    const hasSnippetData = targetSnippet !== null;
+
+    if (!hasSnippetData) {
+      throw createError(404, NOT_FOUND);
+    }
+
+    const { likerList } = targetSnippet;
+
+    const hasUserId = likerList.includes(userId);
+
+    if (taskType === ADD && !hasUserId) {
+      likerList.push(userId);
+    }
+
+    if (taskType === REMOVE && hasUserId) {
+      const index = likerList.findIndex((likerId) => String(likerId) === String(userId));
+
+      likerList.splice(index, 1);
+    }
+
+    await targetSnippet.save();
+
+    res
+      .status(200)
+      .send({ result: OK, likerNumber: likerList.length });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+};
+
+const createComment = async (req, res, next) => {
+  const { userId, snippetId, comment } = req.body;
+  const { auth: token } = req.cookies;
+
+  const decodedId = jwt.decode(token);
+
+  try {
+    const inValidUser = String(userId) !== String(decodedId);
+
+    if (inValidUser) {
+      throw createError(403, NO_AUTHORITY_TO_ACCESS);
+    }
+
+    await Snippet.findByIdAndUpdate(
+      snippetId,
+      { $push: { commentList: { creator: userId, content: comment, createdAt: Date.now() } } },
+      { new: true }
+    );
+
+    res
+      .status(200)
+      .send({ result: OK });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+};
+
+const deleteComment = async (req, res, next) => {
+  const { userId, commentId, snippetId } = req.body;
+  const { auth: token } = req.cookies;
+
+  const decodedId = jwt.decode(token);
+
+  try {
+    const inValidUser = String(userId) !== String(decodedId);
+
+    if (inValidUser) {
+      throw createError(403, NO_AUTHORITY_TO_ACCESS);
+    }
+
+    await Snippet.findByIdAndUpdate(
+      snippetId,
+      { $pull: { commentList: { _id: commentId } } },
+      { new: true }
+    );
+
+    res
+      .status(200)
+      .send({ result: OK });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+};
+
 module.exports = {
   getSnippetList,
   shareSnippet,
+  getUserSnippetList,
   getSnippet,
   deleteSnippet,
   createSnippet,
+  handleLikeData,
+  createComment,
+  deleteComment,
 };
