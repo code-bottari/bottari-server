@@ -11,8 +11,14 @@ const {
   NO_AUTHORITY_TO_ACCESS,
   NOT_FOUND,
   UNEXPECTED_ERROR,
+  UNPROCESSABLE_ENTITY,
   OK,
 } = require("../../constants/messages");
+
+const {
+  ADD,
+  REMOVE,
+} = require("../../constants/names");
 
 const getSnippetList = async (req, res, next) => {
   const { userId } = req.params;
@@ -198,6 +204,56 @@ const createSnippet = async (req, res, next) => {
   }
 };
 
+const handleLikeData = async (req, res, next) => {
+  const { id: targetId } = req.params;
+  const { taskType } = req.body;
+  const { auth: token } = req.cookies;
+
+  const userId = jwt.decode(token);
+
+  try {
+    if (taskType === undefined) {
+      throw createError(422, UNPROCESSABLE_ENTITY);
+    }
+
+    const targetSnippet = await Snippet.findById(targetId);
+
+    const hasSnippetData = targetSnippet !== null;
+
+    if (!hasSnippetData) {
+      throw createError(404, NOT_FOUND);
+    }
+
+    const { likerList } = targetSnippet;
+
+    const hasUserId = likerList.includes(userId);
+
+    if (taskType === ADD && !hasUserId) {
+      likerList.push(userId);
+    }
+
+    if (taskType === REMOVE && hasUserId) {
+      const index = likerList.findIndex((likerId) => String(likerId) === String(userId));
+
+      likerList.splice(index, 1);
+    }
+
+    await targetSnippet.save();
+
+    res
+      .status(200)
+      .send({ result: OK, likerNumber: likerList.length });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+};
+
 const createComment = async (req, res, next) => {
   const { userId, snippetId, comment } = req.body;
   const { auth: token } = req.cookies;
@@ -270,6 +326,7 @@ module.exports = {
   getSnippet,
   deleteSnippet,
   createSnippet,
+  handleLikeData,
   createComment,
   deleteComment,
 };
