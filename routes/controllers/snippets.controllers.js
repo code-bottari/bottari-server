@@ -37,6 +37,20 @@ const getSnippetList = async (req, res, next) => {
   }
 };
 
+const getUserSnippetList = async (req, res, next) => {
+  const { id: userId } = req.params;
+
+  try {
+    const snippetList = await Snippet.find({ "poster": { "_id": `${userId}` } }).populate(["creator", "poster"]);
+
+    res
+      .status(200)
+      .send({ result: OK, snippetList });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getSnippet = async (req, res, next) => {
   const { id } = req.params;
 
@@ -184,9 +198,78 @@ const createSnippet = async (req, res, next) => {
   }
 };
 
+const createComment = async (req, res, next) => {
+  const { userId, snippetId, comment } = req.body;
+  const { auth: token } = req.cookies;
+
+  const decodedId = jwt.decode(token);
+
+  try {
+    const inValidUser = String(userId) !== String(decodedId);
+
+    if (inValidUser) {
+      throw createError(403, NO_AUTHORITY_TO_ACCESS);
+    }
+
+    await Snippet.findByIdAndUpdate(
+      snippetId,
+      { $push: { commentList: { creator: userId, content: comment, createdAt: Date.now() } } },
+      { new: true }
+    );
+
+    res
+      .status(200)
+      .send({ result: OK });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+};
+
+const deleteComment = async (req, res, next) => {
+  const { userId, commentId, snippetId } = req.body;
+  const { auth: token } = req.cookies;
+
+  const decodedId = jwt.decode(token);
+
+  try {
+    const inValidUser = String(userId) !== String(decodedId);
+
+    if (inValidUser) {
+      throw createError(403, NO_AUTHORITY_TO_ACCESS);
+    }
+
+    await Snippet.findByIdAndUpdate(
+      snippetId,
+      { $pull: { commentList: { _id: commentId } } },
+      { new: true }
+    );
+
+    res
+      .status(200)
+      .send({ result: OK });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+};
+
 module.exports = {
   getSnippetList,
+  getUserSnippetList,
   getSnippet,
   deleteSnippet,
   createSnippet,
+  createComment,
+  deleteComment,
 };
