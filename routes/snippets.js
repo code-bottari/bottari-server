@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   getSnippetList,
+  shareSnippet,
   getUserSnippetList,
   getSnippet,
   deleteSnippet,
@@ -19,6 +20,8 @@ router.get("/", getSnippetList);
 router.get("/info/:id", getUserSnippetList);
 
 router.get("/:id", getSnippet);
+
+router.post("/", shareSnippet);
 
 router.delete("/", verifyToken, deleteSnippet);
 

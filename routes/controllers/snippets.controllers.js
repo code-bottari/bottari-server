@@ -4,6 +4,9 @@ const jwt = require("jsonwebtoken");
 
 const Snippet = require("../../models/Snippet");
 const Hashtag = require("../../models/Hashtag");
+const User = require("../../models/User");
+
+const { snippetStorage } = require("../../config/connectSlack");
 
 const {
   INVALID_ID,
@@ -42,6 +45,32 @@ const getSnippetList = async (req, res, next) => {
     next(error);
   }
 };
+
+const shareSnippet = async (req, res, next) => {
+  const { userId, language, code, hashtags } = req.body;
+  try {
+    const user = await User.findById(userId);
+
+    if (user === null) {
+      throw createError(403, NO_AUTHORITY_TO_ACCESS);
+    }
+
+    const { nickname } = user;
+    snippetStorage[nickname] = { language, code, hashtags };
+
+    res
+      .status(200)
+      .send({ result: OK });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+}
 
 const getUserSnippetList = async (req, res, next) => {
   const { id: userId } = req.params;
@@ -322,6 +351,7 @@ const deleteComment = async (req, res, next) => {
 
 module.exports = {
   getSnippetList,
+  shareSnippet,
   getUserSnippetList,
   getSnippet,
   deleteSnippet,
