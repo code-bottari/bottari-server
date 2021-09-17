@@ -8,6 +8,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
+const index = require("./routes/index");
 const slack = require("./routes/slack");
 const users = require("./routes/users");
 const snippets = require("./routes/snippets");
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use("/", index);
 app.use("/slack", slack);
 app.use("/users", users);
 app.use("/snippets", snippets);

@@ -117,11 +117,11 @@ const getNotification = async (req, res, next) => {
       throw createError(404, NOT_FOUND);
     }
 
-    const { notifications } = user;
+    const { notificationList } = user;
 
     res
       .status(200)
-      .send({ result: OK, notifications });
+      .send({ result: OK, notificationList });
   } catch (error) {
     next(error);
   }
