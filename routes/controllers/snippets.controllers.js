@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const Snippet = require("../../models/Snippet");
 const Hashtag = require("../../models/Hashtag");
+const User = require("../../models/User");
 
 const { snippetStorage } = require("../../config/connectSlack");
 
@@ -39,8 +40,11 @@ const getSnippetList = async (req, res, next) => {
   }
 };
 
-const shareSnippet = (req, res, next) => {
-  const { nickname, language, code, hashtags } = req.body;
+const shareSnippet = async (req, res, next) => {
+  const { userId, language, code, hashtags } = req.body;
+
+  const { nickname } = await User.findById(userId);
+
   snippetStorage[nickname] = { language, code, hashtags };
 
   res
