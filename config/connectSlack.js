@@ -121,8 +121,7 @@ const changeType = (language) => {
       delete channelStorage[viewId];
 
       console.log(result);
-    }
-    catch (error) {
+    } catch (error) {
       const { error: message } = error.data;
 
       if (message === NOT_IN_CHANNEL) {

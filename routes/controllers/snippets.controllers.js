@@ -42,14 +42,28 @@ const getSnippetList = async (req, res, next) => {
 
 const shareSnippet = async (req, res, next) => {
   const { userId, language, code, hashtags } = req.body;
+  try {
+    const user = await User.findById(userId);
 
-  const { nickname } = await User.findById(userId);
+    if (user === null) {
+      throw createError(403, NO_AUTHORITY_TO_ACCESS);
+    }
 
-  snippetStorage[nickname] = { language, code, hashtags };
+    const { nickname } = user;
+    snippetStorage[nickname] = { language, code, hashtags };
 
-  res
-    .status(200)
-    .send({ result: OK });
+    res
+      .status(200)
+      .send({ result: OK });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
 };
 
 const getSnippet = async (req, res, next) => {
