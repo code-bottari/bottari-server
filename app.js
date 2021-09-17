@@ -27,7 +27,7 @@ app.use(cookieParser());
 app.use((req, res, next) => {
   res.set({
     "Access-Control-Allow-Origin": CLIENT_URL,
-    "Access-Control-Allow-Methods": "PATCH, DELETE",
+    "Access-Control-Allow-Methods": "GET, POST, DELETE, PATCH, OPTIONS",
     "Access-Control-Allow-Headers": "content-type, Authorization",
     "Access-Control-Allow-Credentials": true,
   });
