@@ -131,11 +131,11 @@ const getFollowingUsers = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const followerList = await User.find({ followerList: { $all: [id] } });
+    const followingList = await User.find({ followerList: { $all: [id] } });
 
     res
       .status(200)
-      .send({ result: OK, followerList });
+      .send({ result: OK, followingList });
   } catch (error) {
     next(error);
   }
