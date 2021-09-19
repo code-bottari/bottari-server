@@ -12,6 +12,7 @@ const {
   handleFollowData,
   getUserData,
   updateUserData,
+  checkNotification,
 } = require("./controllers/users.controllers");
 
 router.post("/check-member", verifyUserData);
@@ -29,5 +30,7 @@ router.patch("/follower/:id", handleFollowData);
 router.get("/:id", getUserData);
 
 router.patch("/:id", verifyToken, updateUserData);
+
+router.patch("/notification/read", verifyToken, checkNotification);
 
 module.exports = router;
