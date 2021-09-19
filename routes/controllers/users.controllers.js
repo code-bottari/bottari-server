@@ -109,8 +109,7 @@ const getNotification = async (req, res, next) => {
 
     const userId = jwt.decode(token);
 
-    const user = await User.findById(userId);
-
+    const user = await User.findById(userId).populate("notificationList.user");
     const hasUserData = user !== null;
 
     if (!hasUserData) {
@@ -254,6 +253,24 @@ const updateUserData = async (req, res, next) => {
   }
 };
 
+const checkNotification = async (req, res, next) => {
+  const { id } = req.body;
+
+  const { auth: token } = req.cookies;
+
+  const userId = jwt.decode(token);
+
+  try {
+    await User.updateOne({ _id: userId, "notificationList._id": id }, { $set: { "notificationList.$.isChecked": true } });
+
+    res
+      .status(200)
+      .send({ result: OK });
+  } catch (error) {
+    next({ message: UNEXPECTED_ERROR });
+  }
+};
+
 module.exports = {
   verifyUserData,
   registerUser,
@@ -263,4 +280,5 @@ module.exports = {
   handleFollowData,
   getUserData,
   updateUserData,
+  checkNotification,
 };
