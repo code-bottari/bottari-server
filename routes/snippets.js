@@ -11,6 +11,7 @@ const {
   handleLikeData,
   createComment,
   deleteComment,
+  updateComment,
 } = require("./controllers/snippets.controllers");
 
 const verifyToken = require("./middlewares/verifyToken");
@@ -32,5 +33,7 @@ router.patch("/liker/:id", handleLikeData);
 router.post("/comment", createComment);
 
 router.delete("/comment", deleteComment);
+
+router.patch("/comment", updateComment);
 
 module.exports = router;
