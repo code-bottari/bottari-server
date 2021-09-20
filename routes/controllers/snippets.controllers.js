@@ -370,9 +370,7 @@ const updateComment = async (req, res, next) => {
 
     await Snippet.findOneAndUpdate(
       { _id: snippetId, "commentList._id": commentId },
-      {
-        "commentList.$.content": content
-      }
+      { "commentList.$.content": content }
     );
 
     res
