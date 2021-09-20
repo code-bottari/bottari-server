@@ -349,6 +349,46 @@ const deleteComment = async (req, res, next) => {
   }
 };
 
+const updateComment = async (req, res, next) => {
+  const { userId, snippetId, commentId, content } = req.body;
+  const { auth: token } = req.cookies;
+
+  const decodedId = jwt.decode(token);
+
+  try {
+    const inValidUser = String(userId) !== String(decodedId);
+
+    if (inValidUser) {
+      throw createError(403, NO_AUTHORITY_TO_ACCESS);
+    }
+
+    const isInvalid = userId === undefined || snippetId === undefined;
+
+    if (isInvalid) {
+      throw createError(422, INVALID_REQUEST);
+    }
+
+    await Snippet.findOneAndUpdate(
+      { _id: snippetId, "commentList._id": commentId },
+      {
+        "commentList.$.content": content
+      }
+    );
+
+    res
+      .status(200)
+      .send({ result: OK });
+  } catch (error) {
+    if (error.status) {
+      next(error);
+
+      return;
+    }
+
+    next({ message: UNEXPECTED_ERROR });
+  }
+};
+
 module.exports = {
   getSnippetList,
   shareSnippet,
@@ -359,4 +399,5 @@ module.exports = {
   handleLikeData,
   createComment,
   deleteComment,
+  updateComment,
 };
