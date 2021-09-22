@@ -23,7 +23,7 @@ const template = `{
       ],
       "hashtagList": [
         {{#repeat min=1 max=10}}
-        {{random "#MergeSort" "#Merge" "#MergeSorting" "#Greedy" "#Algorithm" "#HashTable" "#LinkedList" "#DataStructure" "#Tree" "#BinaryTree" "#BST" "#String" "#Array" "#Object" "#Memoization" "#Queue" "#Stack" "#HashFunction" "#BinaryIndexedTree" "#BinarySearch"}}
+        {{random "#MergeSort" "#Merge" "#MergeSorting" "#Greedy" "#Algorithm" "#HashTable" "#LinkedList" "#DataStructure" "#Tree" "#BinaryTree" "#BST" "#String" "#Array" "#Object" "#Memoization" "#Queue" "#Stack" "#HashFunction" "#BinaryIndexedTree"}}
         {{/repeat}}
       ]
     }
