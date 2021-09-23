@@ -216,7 +216,7 @@ const getUserData = async (req, res, next) => {
 
 const updateUserData = async (req, res, next) => {
   const { id: targetId } = req.params;
-  const { nickname, imageUrl } = req.body;
+  const { nickname, imageUrl, theme } = req.body;
   const { auth: token } = req.cookies;
 
   const userId = jwt.decode(token);
@@ -236,6 +236,7 @@ const updateUserData = async (req, res, next) => {
 
     nickname && (targets.nickname = nickname);
     imageUrl && (targets.imageUrl = imageUrl);
+    theme && (targets.theme = theme);
 
     const updatedUserData = await User.findByIdAndUpdate(userId, targets, { new: true });
 
