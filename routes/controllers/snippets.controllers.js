@@ -25,8 +25,8 @@ const {
 
 const getSnippetList = async (req, res, next) => {
   const { userId } = req.params;
-  const { language } = req.query;
-  const { page, search } = req.body;
+  const { search, language } = req.query;
+  const { page } = req.body;
 
   const skipValue = (page - 1) * 10;
 
