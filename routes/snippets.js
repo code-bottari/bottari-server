@@ -16,13 +16,13 @@ const {
 
 const verifyToken = require("./middlewares/verifyToken");
 
-router.get("/", getSnippetList);
+router.post("/", getSnippetList);
 
 router.get("/info/:id", getUserSnippetList);
 
 router.get("/:id", getSnippet);
 
-router.post("/", shareSnippet);
+router.post("/share", shareSnippet);
 
 router.delete("/", verifyToken, deleteSnippet);
 

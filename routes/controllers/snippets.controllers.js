@@ -25,7 +25,10 @@ const {
 
 const getSnippetList = async (req, res, next) => {
   const { userId } = req.params;
-  const { language, search } = req.query;
+  const { language } = req.query;
+  const { page, search } = req.body;
+
+  const skipValue = (page - 1) * 10;
 
   const hashtagList = search?.split(" ");
 
@@ -36,7 +39,7 @@ const getSnippetList = async (req, res, next) => {
     language && (targets.language = language);
     hashtagList && (targets.hashtagList = { $all: hashtagList });
 
-    const snippetList = await Snippet.find(targets).populate(["creator", "poster"]);
+    const snippetList = await Snippet.find(targets).populate(["creator", "poster"]).skip(skipValue).limit(10);
 
     res
       .status(200)
