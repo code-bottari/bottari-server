@@ -25,21 +25,28 @@ const {
 
 const getSnippetList = async (req, res, next) => {
   const { userId } = req.params;
-  const { search, language } = req.query;
+  const { search, language, sort } = req.query;
   const { page } = req.body;
 
   const skipValue = (page - 1) * 10;
 
   const hashtagList = search?.split(" ");
 
+  const targets = {};
+
+  userId && (targets.poster = userId);
+  language && (targets.language = language);
+  hashtagList && (targets.hashtagList = { $all: hashtagList });
+
+  const sortType = {};
+
   try {
-    const targets = {};
-
-    userId && (targets.poster = userId);
-    language && (targets.language = language);
-    hashtagList && (targets.hashtagList = { $all: hashtagList });
-
-    const snippetList = await Snippet.find(targets).populate(["creator", "poster"]).skip(skipValue).limit(10);
+    const snippetList = await Snippet
+      .find(targets)
+      .sort({ createdAt: -1 })
+      .populate(["creator", "poster"])
+      .skip(skipValue)
+      .limit(10);
 
     res
       .status(200)
